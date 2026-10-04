@@ -1,90 +1,54 @@
 import { FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "./style";
 import { Users } from "../../components/Users";
+import { useState } from "react";
+import { Alert } from "react-native";
+
+    type Props = {
+        id: number,
+        name: string,
+        email: string,
+        cpf: string,
+    }
 
 export function Home() {
-
-    const users = [
-        {
-        id: 1,
-        name: "Hyan",
-        email: "ddasjfna@gmail.com",
-        cpf: "12312312345",
-        },
-        {
-        id: 2,
-        name: "Wesley",
-        email: "lsidgnsldgba@gmail.com",
-        cpf: "47583737456",
-        },
-        {
-        id: 3,
-        name: "Lucas",
-        email: "bpauebfkajs@gmail.com",
-        cpf: "09203917234",
-        },
-        {
-        id: 4,
-        name: "Hugo",
-        email: "tyspdnsl@gmail.com",
-        cpf: "56381936456",
-        },
-        {
-        id: 5,
-        name: "Gabriel",
-        email: "gsfhdfh@gmail.com",
-        cpf: "93613426498",
-        },
-        {
-        id: 45,
-        name: "Gabriel",
-        email: "gsfhdfh@gmail.com",
-        cpf: "93613426498",
-        },
-        {
-        id: 455,
-        name: "Gabriel",
-        email: "gsfhdfh@gmail.com",
-        cpf: "93613426498",
-        },
-        {
-        id: 4554,
-        name: "Gabriel",
-        email: "gsfhdfh@gmail.com",
-        cpf: "93613426498",
-        },
-        {
-        id: 45215,
-        name: "Gabriel",
-        email: "gsfhdfh@gmail.com",
-        cpf: "93613426498",
-        },
-        {
-        id: 4155,
-        name: "Gabriel",
-        email: "gsfhdfh@gmail.com",
-        cpf: "93613426498",
-        },
-        {
-        id: 4585,
-        name: "Gabriel",
-        email: "gsfhdfh@gmail.com",
-        cpf: "93613426498",
-        },
-        {
-        id: 45547,
-        name: "Gabriel",
-        email: "gsfhdfh@gmail.com",
-        cpf: "93613426498",
-        },
-    ];
-
-    // function addUsers(){
-    //     push(users)
-    // }
+    const [users, setUsers] = useState<Props[]>([])
+    const [name, setName] = useState('')
+    const [email, setEmail] = useState('')
+    const [cpf, setCpf] = useState('')
 
     function registerUser(){
-        console.log('Você registrou um novo usuário')
+        const data = {
+            id: String(new Date().getTime()),
+            name,
+            email,
+            cpf,
+        };
+        console.log(data)
+
+        const result = users.filter(user => user.name.toUpperCase() === name.toUpperCase())
+        if (result.length > 0) {
+            return Alert.alert('Usuário', 'Já existe um usuário com esse nome.')
+        }
+
+        setUsers([...users, data])
+        setName('')
+        setEmail('')
+        setCpf('')
+    }
+
+    function removerUser(name: string){
+        Alert.alert('Usuário', `Remover o usuário ${name}?`,[
+            {
+                text:'Sim',
+                onPress: ()=>setUsers(users => users.filter(user => user.name !== name))
+            },
+            {
+                text: 'Não',
+                style: 'cancel'
+            }
+        ])
+        console.log(`Você clicou em remover o Participante ${name}`)
     }
 
     return (
@@ -97,16 +61,22 @@ export function Home() {
             style={styles.input}
             placeholder="Digite seu nome"
             placeholderTextColor='#fff'
+            value={name}
+            onChangeText={value => setName(value)}
             />
             <TextInput
             style={styles.input}
             placeholder="Digite seu e-mail"
             placeholderTextColor='#fff'
+            value={email}
+            onChangeText={value => setEmail(value)}
             />
             <TextInput
             style={styles.input}
             placeholder="Digite seu CPF"
             placeholderTextColor='#fff'
+            value={cpf}
+            onChangeText={value => setCpf(value)}
             />
 
             <TouchableOpacity style={styles.button}
@@ -126,17 +96,16 @@ export function Home() {
                 name={item.name}
                 email={item.email}
                 cpf={item.cpf}
-                
+                onRemove={()=>removerUser(item.name)}
                 />
             )}
             showsVerticalScrollIndicator={false}
-            ListEmptyComponent={()=>{
+            ListEmptyComponent={()=>(
                 <Text style={styles.listEmptyText}>
                     Você não tem possui nenhum usuário cadastrado. Faça um novo cadastro!
                 </Text>
-            }}
+            )}
             />
-        
         </View>
     </View>
     )
